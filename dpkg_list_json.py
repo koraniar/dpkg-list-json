@@ -27,7 +27,7 @@ import json
 import sys
 
 def getSoftwareWithGUI():
-    lines = os.popen('dpkg --search "*.desktop" | awk "{print $1}" | sed "s/://" | sort --unique').read().split('\n')
+    lines = os.popen('dpkg --search "*.desktop" | awk "{print $1}" | sed "s/://" | cut -d " " -f 1 | sort --unique').read().split('\n')
     return lines
 
 def main():
