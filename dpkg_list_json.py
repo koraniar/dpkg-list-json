@@ -72,14 +72,11 @@ def main():
                 parsed.append(True)
                 parsed.append(getPackageDetail(parsed[1], 'Maintainer'))
                 parsed.append(getPackageDetail(parsed[1], 'Installed-Size'))
+                pkgs.append({'Name':parsed[1], 'State':parsed[0], 'Version':parsed[2],
+                'Architecture':parsed[3], 'Description':parsed[4], 'HasGUI':parsed[6],
+                'Maintainer':parsed[7], 'Size':parsed[8], 'InstallationDate':parsed[5]})
             except:
                 parsed.append(False)
-                parsed.append('')
-                parsed.append('')
-            
-            pkgs.append({'Name':parsed[1], 'State':parsed[0], 'Version':parsed[2],
-            'Architecture':parsed[3], 'Description':parsed[4], 'HasGUI':parsed[6],
-            'Maintainer':parsed[7], 'Size':parsed[8], 'InstallationDate':parsed[5]})
 
     json_output = json.dumps(pkgs)
 
