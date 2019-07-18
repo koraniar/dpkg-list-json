@@ -26,13 +26,18 @@ import os
 import json
 import sys
 
+def getSoftwareWithGUI():
+    lines = os.popen('dpkg --search "*.desktop" | awk "{print $1}" | sed "s/://" | sort --unique').read().split('\n')
+    return lines
+
 def main():
+    mainPrograms = getSoftwareWithGUI()
     lines = os.popen('dpkg -l | grep "^ii"').read().split('\n')
     i = 0
     while len([l for l in lines[i].split('  ') if l]) != 5:
         i += 1
     offsets = [lines[i].index(l) for l in lines[i].split('  ') if len(l)]
-    pkgs = {}
+    pkgs = []
     for line in lines:
         parsed = []
         for i in range(len(offsets)):
@@ -42,7 +47,12 @@ def main():
                 parsed.append(line[offsets[i]:offsets[i + 1]].strip())
 
         if len(parsed[1]) > 0:
-            pkgs.update({parsed[1]:{'State':parsed[0], 'Version':parsed[2], 'Architecture':parsed[3],'Description':parsed[4]}})
+            try:
+                mainPrograms.index(parsed[1])
+                parsed.append(True)
+            except:
+                parsed.append(False)
+            pkgs.append({'Name':parsed[1], 'State':parsed[0], 'Version':parsed[2], 'Architecture':parsed[3], 'Description':parsed[4], 'HasGUI':parsed[5]})
 
     json_output = json.dumps(pkgs)
 
