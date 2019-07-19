@@ -48,6 +48,15 @@ def getInstallationDate(softwareName, installationDates):
 def getPackageDetail(packageName, detailName):
     return os.popen('dpkg -s ' + packageName + ' | grep ' + detailName + ' | cut -d ":" -f 2').read().strip()
 
+def parseSoftwareVendor(vendor, removeEmail):
+    finalVendors = []
+    if removeEmail:
+        vendors = vendor.replace('\n', '').split('>')
+        for vendorEmail in vendors:
+            finalVendors.append(vendorEmail.split('<')[0])
+        return '|'.join(finalVendors)[:-1]
+    return vendor
+
 def main():
     mainPrograms = getSoftwareWithGUI()
     installationDate = getSoftwareInstallationdate()
@@ -70,7 +79,7 @@ def main():
             try:
                 mainPrograms.index(parsed[1])
                 parsed.append(True)
-                parsed.append(getPackageDetail(parsed[1], 'Maintainer'))
+                parsed.append(parseSoftwareVendor(getPackageDetail(parsed[1], 'Maintainer'), True))
                 parsed.append(getPackageDetail(parsed[1], 'Installed-Size'))
                 pkgs.append({'Name':parsed[1], 'State':parsed[0], 'Version':parsed[2],
                 'Architecture':parsed[3], 'Description':parsed[4], 'HasGUI':parsed[6],
